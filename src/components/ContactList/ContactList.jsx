@@ -1,12 +1,17 @@
 import Contact from "../Contact/Contact";
+import css from "./ContactList.module.css";
 
-const ContactList = ({ contacts }) => {
+const ContactList = ({ contacts, onDeleteContact }) => {
   return (
-    <div>
-      {contacts.map((contact) => (
-        <Contact key={contact.id} {...contact} />
-      ))}
-    </div>
+    <ul className={css.component}>
+      {contacts.map((contact) => {
+        return (
+          <li className={css.contactList} key={contact.id}>
+            <Contact contact={contact} onDeleteContact={onDeleteContact} />
+          </li>
+        );
+      })}
+    </ul>
   );
 };
 

@@ -1,7 +1,8 @@
 import ContactForm from "../ContactForm/ContactForm";
 import SearchBox from "../SearchBox/SearchBox";
 import ContactList from "../ContactList/ContactList";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import css from "./App.module.css";
 
 function App() {
   const initialContacts = [
@@ -18,15 +19,36 @@ function App() {
     contact.name.toLowerCase().includes(search)
   );
   const addContact = (newContact) => {
-    setContacts([...contacts, newContact]);
+    setContacts((prevContacts) => {
+      const renewContacts = [...prevContacts, newContact];
+      localStorage.setItem("contacts", JSON.stringify(renewContacts));
+      return renewContacts;
+    });
   };
 
+  const deleteContact = (contactId) => {
+    setContacts((prevContacts) => {
+      const renewContacts = prevContacts.filter(
+        (contact) => contact.id !== contactId
+      );
+      localStorage.setItem("contacts", JSON.stringify(renewContacts));
+      return renewContacts;
+    });
+  };
+
+  useEffect(() => {
+    const savedContacts = localStorage.getItem("contacts");
+    if (savedContacts) {
+      setContacts(JSON.parse(savedContacts));
+    }
+  }, []);
+
   return (
-    <div>
-      <h1>Phonebook</h1>
+    <div className={css.mainContainer}>
+      <h1 className={css.mainTitle}>Phonebook</h1>
       <ContactForm onAddContact={addContact} />
       <SearchBox value={search} onSearch={setSearch} />
-      <ContactList contacts={filterContacts} />
+      <ContactList contacts={filterContacts} onDeleteContact={deleteContact} />
     </div>
   );
 }
